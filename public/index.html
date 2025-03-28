@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRUD App</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>CRUD App</h1>
+    <input type="text" id="itemInput" placeholder="Enter item name">
+    <button onclick="addItem()">Add Item</button>
+    
+    <ul id="itemsList"></ul>
+
+    <script>
+        async function fetchItems() {
+            const response = await fetch('/items');
+            const items = await response.json();
+            const list = document.getElementById('itemsList');
+            list.innerHTML = '';
+            items.forEach(item => {
+                const li = document.createElement('li');
+                li.textContent = item.name;
+                li.innerHTML += ` <button onclick="deleteItem('${item._id}')">Delete</button>`;
+                list.appendChild(li);
+            });
+        }
+
+        async function addItem() {
+            const name = document.getElementById('itemInput').value;
+            await fetch('/items', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name })
+            });
+            document.getElementById('itemInput').value = '';
+            fetchItems();
+        }
+
+        async function deleteItem(id) {
+            await fetch(`/items/${id}`, { method: 'DELETE' });
+            fetchItems();
+        }
+
+        fetchItems();
+    </script>
+</body>
+</html>

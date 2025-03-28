@@ -1,0 +1,71 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nodejs-deployment
+  labels:
+    app: nodejs-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nodejs-app
+  template:
+    metadata:
+      labels:
+        app: nodejs-app
+    spec:
+      containers:
+      - name: nodejs-container
+        image: raemondarellano/nodejs-app:latest
+        ports:
+        - containerPort: 3000
+        env:
+
+        - name: MONGO_HOST        #mongo host
+          valueFrom:
+            configMapKeyRef:
+             name: mongodb-configmap
+             key: MONGO_HOST
+
+        - name: MONGO_PORT        #mongo port
+          valueFrom:
+            configMapKeyRef:
+             name: mongodb-configmap
+             key: MONGO_PORT
+
+
+        - name: MONGO_DB     # mongo database name
+          valueFrom:
+            configMapKeyRef:
+              name: mongodb-configmap
+              key: MONGO_DB
+
+
+        - name: MONGO_USER         #mongo username
+          valueFrom:
+            secretKeyRef:
+              name: mongodb-secret
+              key: MONGO_USER
+
+        - name: MONGO_PASS     #mongo password
+          valueFrom:
+            secretKeyRef:
+              name: mongodb-secret
+              key: MONGO_PASS
+
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: nodejs-service
+spec:
+  selector:
+    app: nodejs-app
+  type: LoadBalancer
+  ports:
+    - port: 3000
+      targetPort: 3000
+#      nodePort: 30000
+
