@@ -3,16 +3,16 @@ kind: Deployment
 metadata:
   name: nodejs-deployment
   labels:
-    app: nodejs-app
+    app: nodejs
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: nodejs-app
+      app: nodejs
   template:
     metadata:
       labels:
-        app: nodejs-app
+        app: nodejs
     spec:
       containers:
       - name: nodejs-container
@@ -62,7 +62,7 @@ metadata:
   name: nodejs-service
 spec:
   selector:
-    app: nodejs-app
+    app: nodejs
   type: LoadBalancer
   ports:
     - port: 3000
