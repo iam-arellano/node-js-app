@@ -12,6 +12,7 @@ pipeline {
         IMAGE_NAME = "${DOCKER_USER}" + "/" + "${APP_NAME}"  
         IMAGE_TAG = "${RELEASE}-${BUILD_NUMBER}"
         JENKINS_API_TOKEN = credentials("JENKINS_API_TOKEN")
+        SONAR_TOKEN = credentials("sonarqube_access")               // credential access for sonarqube
         
     }
 
@@ -34,6 +35,23 @@ pipeline {
               sh 'npm init -y'
               sh 'npm install express mongoose cors -y'
                 echo 'Git Checkout Completed'
+            }
+        }
+        
+          stage("SonarQube Analysis") {
+            steps {
+                script {
+                    withSonarQubeEnv('sonarqube_server') {  // Make sure you've configured SonarQube server in Jenkins under Manage Jenkins > Configure System > SonarQube Servers
+                        sh """
+                            ${SCANNER_HOME}/bin/sonar-scanner \
+                            -Dsonar.projectKey=${APP_NAME} \
+                            -Dsonar.projectName=${APP_NAME} \
+                            -Dsonar.projectVersion=${RELEASE}-${BUILD_NUMBER} \
+                            -Dsonar.sources=. \
+                            -Dsonar.login=${SONAR_TOKEN} \
+                        """
+                    }
+                }
             }
         }
         
