@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: nodejs-app
+  name: nodejs
   namespace: argocd
 spec:
   project: default
@@ -12,7 +12,7 @@ spec:
     path: k8s_yaml/                   # path of your yaml manifest
   destination:
     server: https://kubernetes.default.svc
-    namespace: namespace-nodejs-app
+    namespace:
   syncPolicy:
     syncOptions:
     - CreateNamespace=true
