@@ -19,4 +19,4 @@ spec:
 
     automated:                                                              # to automaticaly sync  any change in the git repository
       selfHeal: true                                                        # selfheal true is used to undoes manual config in yaml manifest
-      prune: true
+      prune: false
